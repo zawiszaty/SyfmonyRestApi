@@ -1,0 +1,21 @@
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+books:
+    resource: "@AppBundle/Controller/BooksController.php"
+    prefix: /api/
+    type: rest
+category:
+    resource: "@AppBundle/Controller/CategoryController.php"
+    prefix: /api/
+    type: rest
+authors:
+    resource: "@AppBundle/Controller/AuthorsController.php"
+    prefix: /api/
+    type: rest
+auth:
+    resource: "@AppBundle/Controller/AuthController.php"
+    prefix: /api/
+    type: rest
+api_login_check:
+    path: /api/login_check
