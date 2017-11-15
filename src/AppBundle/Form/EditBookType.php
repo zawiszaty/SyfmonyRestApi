@@ -6,6 +6,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use \AppBundle\Entity\Books;
 
 class EditBookType extends AbstractType
 {
@@ -22,7 +23,7 @@ class EditBookType extends AbstractType
     {
         $resolver->setDefaults(array(
             'csrf_protection' => false,
-            'data_class' => \AppBundle\Entity\Books::class,
+            'data_class' => Books::class,
         ));
     }
 }

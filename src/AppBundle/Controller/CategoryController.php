@@ -28,8 +28,8 @@ class CategoryController extends FOSRestController
      */
     public function getAllCategoryAction(): Response
     {
-        $categoryLogic = $this->get('AppBundle\Utils\Category');
-        $category = $categoryLogic->getAllCategory($this->getDoctrine());
+        $categoryProvider = $this->get('AppBundle\Provider\CategoryProvider');
+        $category = $categoryProvider->getAllCategory();
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($category, 'json');
         $view = $this->view($category, 200);
@@ -38,8 +38,8 @@ class CategoryController extends FOSRestController
 
     public function getCategoryAction(int $id): Response
     {
-        $categoryLogic = $this->get('AppBundle\Utils\Category');
-        $category = $categoryLogic->getSingleCategory($this->getDoctrine(), $id);
+        $categoryProvider = $this->get('AppBundle\Provider\CategoryProvider');
+        $category = $categoryProvider->getSingleCategory($id);
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($category, 'json');
         $view = $this->view($category, 200);
@@ -58,7 +58,7 @@ class CategoryController extends FOSRestController
         $form = $this->createForm(AddCategoryType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $categoryLogic = $this->get('AppBundle\Utils\Category');
+            $categoryLogic = $this->get('appbundle\utils\category');
             $categoryLogic->addCategory($this->getDoctrine(), $request->request->all());
             $view = $this->view('succes', 200);
 
@@ -73,15 +73,13 @@ class CategoryController extends FOSRestController
     public function deletePanelDelCategoryAction(Request $request, int $id): Response
     {
         $validator = Validation::createValidator();
-        $violations = $validator->validate($id, array(
-            new NotBlank(),
-        ));
+        $violations = $validator->validate($id, array(new NotBlank(),));
         if (0 !== count($violations)) {
             $view = $this->view('error', 200);
 
             return $this->handleView($view);
         }
-        $authorsLogic = $this->get('AppBundle\Utils\Category');
+        $authorsLogic = $this->get('appbundle\utils\category');
 
         $authorsLogic->delCategory($this->getDoctrine(), $id);
         $view = $this->view('success', 200);
@@ -91,7 +89,7 @@ class CategoryController extends FOSRestController
 
     public function putPanelEditCategoryAction(Request $request, int $id): Response
     {
-        $authorsLogic = $this->get('AppBundle\Utils\Category');
+        $authorsLogic = $this->get('appbundle\utils\category');
         $form = $this->createForm(EditCategoryType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted()) {

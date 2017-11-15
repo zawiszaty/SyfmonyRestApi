@@ -26,8 +26,8 @@ class AuthorsController extends FOSRestController
      */
     public function getAllAuthorsAction(): Response
     {
-        $authorsLogic = $this->get('AppBundle\Utils\Authors');
-        $authors = $authorsLogic->getAllAuthors($this->getDoctrine());
+        $authorProvider = $this->get('AppBundle\Provider\AuthorProvider');
+        $authors = $authorProvider->getAllAuthors();
 
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($authors, 'json');
@@ -37,7 +37,7 @@ class AuthorsController extends FOSRestController
 
     public function getAuthorAction(int $id): Response
     {
-        $authorsLogic = $this->get('AppBundle\Utils\Authors');
+        $authorsLogic = $this->get('appbundle\utils\authors');
         $authors = $authorsLogic->getSingleAuthor($this->getDoctrine(), $id);
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($authors, 'json');
@@ -51,7 +51,7 @@ class AuthorsController extends FOSRestController
         $form = $this->createForm(AddAuthorsType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $authorsLogic = $this->get('AppBundle\Utils\Authors');
+            $authorsLogic = $this->get('appbundle\utils\authors');
             $authorsLogic->addAuthor($this->getDoctrine(), $request->request->all());
             $view = $this->view('succes', 200);
 
@@ -66,15 +66,13 @@ class AuthorsController extends FOSRestController
     public function deletePanelDelAuthorAction(Request $request, int $id): Response
     {
         $validator = Validation::createValidator();
-        $violations = $validator->validate($id, array(
-            new NotBlank(),
-        ));
+        $violations = $validator->validate($id, array(new NotBlank(),));
         if (0 !== count($violations)) {
             $view = $this->view('error', 200);
 
             return $this->handleView($view);
         }
-        $authorsLogic = $this->get('AppBundle\Utils\Authors');
+        $authorsLogic = $this->get('appbundle\utils\authors');
 
         $authorsLogic->delAuthor($this->getDoctrine(), $id);
         $view = $this->view('success', 200);
@@ -84,7 +82,7 @@ class AuthorsController extends FOSRestController
 
     public function putPanelEditAuthorAction(Request $request, int $id): Response
     {
-        $authorsLogic = $this->get('AppBundle\Utils\Authors');
+        $authorsLogic = $this->get('appbundle\utils\authors');
 
         if (!$authorsLogic->validateAuthor($id)) {
             $view = $this->view('error', 200);

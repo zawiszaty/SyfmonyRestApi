@@ -10,23 +10,23 @@ use Symfony\Component\Validator\Validation;
 
 class Authors
 {
-    public function getAllAuthors(Registry $doctrine): array
-    {
-        $authors = $doctrine
-            ->getRepository(\AppBundle\Entity\Authors::class)
-            ->findAll();
-
-        return $authors;
-    }
-
-    public function getSingleAuthor(Registry $doctrine, int $id): \AppBundle\Entity\Authors
-    {
-        $author = $doctrine
-            ->getRepository(\AppBundle\Entity\Authors::class)
-            ->find($id);
-
-        return $author;
-    }
+//    public function getAllAuthors(Registry $doctrine): array
+//    {
+//        $authors = $doctrine
+//            ->getRepository(\AppBundle\Entity\Authors::class)
+//            ->findAll();
+//
+//        return $authors;
+//    }
+//
+//    public function getSingleAuthor(Registry $doctrine, int $id): \AppBundle\Entity\Authors
+//    {
+//        $author = $doctrine
+//            ->getRepository(\AppBundle\Entity\Authors::class)
+//            ->find($id);
+//
+//        return $author;
+//    }
 
     public function validateAuthor(int $id): bool
     {

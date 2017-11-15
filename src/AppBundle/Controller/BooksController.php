@@ -25,8 +25,8 @@ class BooksController extends FOSRestController
      */
     public function getAllBooksAction(): Response
     {
-        $bookLogic = $this->get('AppBundle\Utils\Books');
-        $books = $bookLogic->getAllBooks($this->getDoctrine());
+        $bookProvider = $this->get('AppBundle\Provider\BooksProvider');
+        $books = $bookProvider->getAllBooks($this->getDoctrine());
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($books, 'json');
         $view = $this->view($books, 200);
@@ -35,8 +35,8 @@ class BooksController extends FOSRestController
 
     public function getBookAction(int $id): Response
     {
-        $bookLogic = $this->get('AppBundle\Utils\Books');
-        $book = $bookLogic->getSingleBook($this->getDoctrine(), $id);
+        $bookProvider = $this->get('aAppBundle\Provider\BooksProvider');
+        $book = $bookProvider->getSingleBook( $id);
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($book, 'json');
         $view = $this->view($book, 200);
@@ -53,7 +53,7 @@ class BooksController extends FOSRestController
         $form = $this->createForm(AddBooksType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $bookLogic = $this->get('AppBundle\Utils\Books');
+            $bookLogic = $this->get('appbundle\utils\books');
             $bookLogic->addBooks($this->getDoctrine(), $request->request->all());
             $view = $this->view('succes', 200);
 
@@ -68,16 +68,14 @@ class BooksController extends FOSRestController
     public function deletePanelDelBookAction(Request $request, int $id): Response
     {
         $validator = Validation::createValidator();
-        $violations = $validator->validate($id, array(
-            new NotBlank(),
-        ));
+        $violations = $validator->validate($id, array(new NotBlank(),));
         if (0 !== count($violations)) {
             $view = $this->view('error', 200);
 
             return $this->handleView($view);
         }
 
-        $authorsLogic = $this->get('AppBundle\Utils\Books');
+        $authorsLogic = $this->get('appbundle\utils\books');
 
         $authorsLogic->delBook($this->getDoctrine(), $id);
         $view = $this->view('success', 200);
@@ -87,7 +85,7 @@ class BooksController extends FOSRestController
 
     public function putPanelEditBookAction(Request $request, int $id): Response
     {
-        $booksLogic = $this->get('AppBundle\Utils\Books');
+        $booksLogic = $this->get('appbundle\utils\books');
         $form = $this->createForm(EditBookType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted()) {

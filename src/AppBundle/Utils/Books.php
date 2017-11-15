@@ -8,19 +8,19 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 class Books
 {
-    public function getAllBooks(Registry $doctrine): array
-    {
-        $books = $doctrine
-            ->getRepository(\AppBundle\Entity\Books::class)
-            ->findAll();
-        return $books;
-    }
-
-    public function getSingleBook(Registry $doctrine, int $id): \AppBundle\Entity\Books
-    {
-        $books = $doctrine->getRepository(\AppBundle\Entity\Books::class)->find($id);
-        return $books;
-    }
+//    public function getAllBooks(Registry $doctrine): array
+//    {
+//        $books = $doctrine
+//            ->getRepository(\AppBundle\Entity\Books::class)
+//            ->findAll();
+//        return $books;
+//    }
+//
+//    public function getSingleBook(Registry $doctrine, int $id): \AppBundle\Entity\Books
+//    {
+//        $books = $doctrine->getRepository(\AppBundle\Entity\Books::class)->find($id);
+//        return $books;
+//    }
 
     public function addBooks(Registry $doctrine, array $params): bool
     {
