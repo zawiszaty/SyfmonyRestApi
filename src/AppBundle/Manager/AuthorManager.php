@@ -3,7 +3,6 @@
 
 namespace AppBundle\Manager;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use \AppBundle\Entity\Authors;
 use \AppBundle\Entity\Books;
 
@@ -14,20 +13,37 @@ use \AppBundle\Entity\Books;
 class AuthorManager
 {
     /**
+     * EntityManager object
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $_doctrine;
+
+    /**
+     * AuthorManager constructor.
+     *
+     * @param \Doctrine\ORM\EntityManager $doctrine
+     */
+    public function __construct(\Doctrine\ORM\EntityManager $doctrine)
+    {
+        $this->_doctrine = $doctrine;
+    }
+
+    /**
      * This method add new author
      *
-     * @param  Registry $doctrine
      * @param  array $params
+     *
      * @return bool
      */
-    public function addAuthor(Registry $doctrine, array $params): bool
+    public function addAuthor(array $params): bool
     {
         $author = new Authors();
         $author->setName($params['name']);
         $author->setDescription($params['description']);
 
-        $doctrine->getManager()->persist($author);
-        $doctrine->getManager()->flush();
+        $this->_doctrine->persist($author);
+        $this->_doctrine->flush();
 
         return true;
     }
@@ -35,22 +51,22 @@ class AuthorManager
     /**
      * This method delete author
      *
-     * @param Registry $doctrine
      * @param int $id
+     *
      * @return bool
      */
-    public function delAuthor(Registry $doctrine, int $id): bool
+    public function delAuthor(int $id): bool
     {
-        $author = $doctrine->getRepository(Authors::class)->find($id);
-        $books = $doctrine->getRepository(Books::class)->findBy(['authorsauthors' => $id]);
-        $defaultAuthor = $doctrine->getRepository(Authors::class)->find(1);
+        $author = $this->_doctrine->getRepository(Authors::class)->find($id);
+        $books = $this->_doctrine->getRepository(Books::class)->findBy(['authorsauthors' => $id]);
+        $defaultAuthor = $this->_doctrine->getRepository(Authors::class)->find(1);
         foreach ($books as $book) {
             $book->setAuthorsauthors($defaultAuthor);
         }
-        $em = $doctrine->getManager();
 
-        $em->remove($author);
-        $em->flush();
+
+        $this->_doctrine->remove($author);
+        $this->_doctrine->flush();
 
         return true;
     }
@@ -58,19 +74,18 @@ class AuthorManager
     /**
      * This method edit author
      *
-     * @param Registry $doctrine
      * @param \AppBundle\Entity\Authors $author
      * @param array $params
+     *
      * @return bool
      */
-    public function editAuthor(Registry $doctrine, Authors $author, array $params): bool
+    public function editAuthor(Authors $author, array $params): bool
     {
         $author->setName($params['name']);
         $author->setDescription($params['description']);
-        $em = $doctrine->getManager();
 
-        $em->persist($author);
-        $em->flush();
+        $this->_doctrine->persist($author);
+        $this->_doctrine->flush();
         return true;
     }
 }

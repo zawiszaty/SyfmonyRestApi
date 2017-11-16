@@ -15,20 +15,36 @@ use \AppBundle\Entity\Books;
 class CategoryManager
 {
     /**
+     * EntityManager object
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $_doctrine;
+
+    /**
+     * CategoryManager constructor.
+     *
+     * @param \Doctrine\ORM\EntityManager $doctrine
+     */
+    public function __construct(\Doctrine\ORM\EntityManager $doctrine)
+    {
+        $this->_doctrine = $doctrine;
+    }
+
+    /**
      * This method add new category
      *
-     * @param Registry $doctrine
      * @param array $params
      *
      * @return bool
      */
-    public function addCategory(Registry $doctrine, array $params): bool
+    public function addCategory(array $params): bool
     {
         $category = new Category();
         $category->setName($params['name']);
         $category->setDescription($params['description']);
-        $doctrine->getManager()->persist($category);
-        $doctrine->getManager()->flush();
+        $this->_doctrine->persist($category);
+        $this->_doctrine->flush();
 
         return true;
     }
@@ -36,43 +52,39 @@ class CategoryManager
     /**
      * This method delete category
      *
-     * @param Registry $doctrine
      * @param int $id
      *
      * @return bool
      */
-    public function delCategory(Registry $doctrine, int $id): bool
+    public function delCategory(int $id): bool
     {
-        $category = $doctrine->getRepository(Category::class)->find($id);
-        $books = $doctrine->getRepository(Books::class)->findBy(['categorycategory' => $id]);
-        $defaultCategory = $doctrine->getRepository(Category::class)->find(1);
+        $category = $this->_doctrine->getRepository(Category::class)->find($id);
+        $books = $this->_doctrine->getRepository(Books::class)->findBy(['categorycategory' => $id]);
+        $defaultCategory = $this->_doctrine->getRepository(Category::class)->find(1);
         foreach ($books as $book) {
             $book->setCategorycategory($defaultCategory);
         }
-        $em = $doctrine->getManager();
-
-        $em->remove($category);
-        $em->flush();
+        $this->_doctrine->remove($category);
+        $this->_doctrine->flush();
 
         return true;
     }
 
+
     /**
      * This method edit category
      *
-     * @param Registry $doctrine
-     * @param \AppBundle\Entity\Category $oldCategory
+     * @param $oldCategory
      * @param array $params
      *
      * @return bool
      */
-    public function editCategory(Registry $doctrine, $oldCategory, array $params): bool
+    public function editCategory($oldCategory, array $params): bool
     {
         $oldCategory->setName($params['name']);
         $oldCategory->setDescription($params['description']);
-        $em = $doctrine->getManager();
-        $em->persist($oldCategory);
-        $em->flush();
+        $this->_doctrine->persist($oldCategory);
+        $this->_doctrine->flush();
         return true;
     }
 }

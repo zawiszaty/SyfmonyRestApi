@@ -35,24 +35,38 @@ class AuthorsController extends FOSRestController
         return $this->handleView($view);
     }
 
+    /**
+     * This method return only one author
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
     public function getAuthorAction(int $id): Response
     {
-        $authorsLogic = $this->get('appbundle\utils\authors');
-        $authors = $authorsLogic->getSingleAuthor($this->getDoctrine(), $id);
+        $authorsLogic = $this->get('AppBundle\Provider\AuthorProvider');
+        $authors = $authorsLogic->getSingleAuthor($id);
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($authors, 'json');
         $view = $this->view($authors, 200);
         return $this->handleView($view);
     }
 
+    /**
+     * This method add new author
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
     public function putPanelAddAuthorAction(Request $request): Response
     {
 
         $form = $this->createForm(AddAuthorsType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $authorsLogic = $this->get('appbundle\utils\authors');
-            $authorsLogic->addAuthor($this->getDoctrine(), $request->request->all());
+            $authorsManager = $this->get('AppBundle\Manager\AuthorManager');
+            $authorsManager->addAuthor($request->request->all());
             $view = $this->view('succes', 200);
 
             return $this->handleView($view);
@@ -63,6 +77,14 @@ class AuthorsController extends FOSRestController
         return $this->handleView($view);
     }
 
+    /**
+     * This method delete author
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return Response
+     */
     public function deletePanelDelAuthorAction(Request $request, int $id): Response
     {
         $validator = Validation::createValidator();
@@ -72,29 +94,31 @@ class AuthorsController extends FOSRestController
 
             return $this->handleView($view);
         }
-        $authorsLogic = $this->get('appbundle\utils\authors');
+        $authorsManager = $this->get('AppBundle\Manager\AuthorManager');
 
-        $authorsLogic->delAuthor($this->getDoctrine(), $id);
+        $authorsManager->delAuthor($id);
         $view = $this->view('success', 200);
 
         return $this->handleView($view);
     }
 
+    /**
+     * This method changes author
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return Response
+     */
     public function putPanelEditAuthorAction(Request $request, int $id): Response
     {
-        $authorsLogic = $this->get('appbundle\utils\authors');
-
-        if (!$authorsLogic->validateAuthor($id)) {
-            $view = $this->view('error', 200);
-
-            return $this->handleView($view);
-        }
-
         $form = $this->createForm(EditAuthorType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted()) {
-            $oldAuhtor = $authorsLogic->getSingleAuthor($this->getDoctrine(), $id);
-            $authorsLogic->editAuthor($this->getDoctrine(), $oldAuhtor, $request->request->all());
+            $authorsManager = $this->get('AppBundle\Manager\AuthorManager');
+            $authorProvider = $this->get('AppBundle\Provider\AuthorProvider');
+            $oldAuhtor = $authorProvider->getSingleAuthor($id);
+            $authorsManager->editAuthor($oldAuhtor, $request->request->all());
             $view = $this->view('succes', 200);
 
             return $this->handleView($view);

@@ -13,8 +13,18 @@ use \AppBundle\Entity\Category;
  */
 class CategoryProvider
 {
+    /**
+     * EntityManager object
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $_doctrine;
 
+    /**
+     * CategoryProvider constructor.
+     *
+     * @param \Doctrine\ORM\EntityManager $doctrine //
+     */
     public function __construct(\Doctrine\ORM\EntityManager $doctrine)
     {
         $this->_doctrine = $doctrine;
@@ -39,7 +49,7 @@ class CategoryProvider
      *
      * @param int $id //
      *
-     * @return \AppBundle\Entity\Category
+     * @return Category
      */
     public function getSingleCategory(int $id): Category
     {

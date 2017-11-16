@@ -33,9 +33,13 @@ class BooksController extends FOSRestController
         return $this->handleView($view);
     }
 
+    /**
+     * @param int $id
+     * @return Response
+     */
     public function getBookAction(int $id): Response
     {
-        $bookProvider = $this->get('aAppBundle\Provider\BooksProvider');
+        $bookProvider = $this->get('AppBundle\Provider\BooksProvider');
         $book = $bookProvider->getSingleBook( $id);
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($book, 'json');
@@ -53,8 +57,8 @@ class BooksController extends FOSRestController
         $form = $this->createForm(AddBooksType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $bookLogic = $this->get('appbundle\utils\books');
-            $bookLogic->addBooks($this->getDoctrine(), $request->request->all());
+            $booksManager = $this->get('AppBundle\Manager\BooksManager');
+            $booksManager->addBooks($request->request->all());
             $view = $this->view('succes', 200);
 
             return $this->handleView($view);
@@ -65,6 +69,11 @@ class BooksController extends FOSRestController
         return $this->handleView($view);
     }
 
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return Response
+     */
     public function deletePanelDelBookAction(Request $request, int $id): Response
     {
         $validator = Validation::createValidator();
@@ -75,23 +84,32 @@ class BooksController extends FOSRestController
             return $this->handleView($view);
         }
 
-        $authorsLogic = $this->get('appbundle\utils\books');
+        $booksManager = $this->get('AppBundle\Manager\BooksManager');
 
-        $authorsLogic->delBook($this->getDoctrine(), $id);
+        $booksManager->delBook($id);
         $view = $this->view('success', 200);
 
         return $this->handleView($view);
     }
 
+    /**
+     * This method changes book
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return Response
+     */
     public function putPanelEditBookAction(Request $request, int $id): Response
     {
-        $booksLogic = $this->get('appbundle\utils\books');
+
         $form = $this->createForm(EditBookType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted()) {
-
-            $oldBook = $booksLogic->getSingleBook($this->getDoctrine(), $id);
-            $booksLogic->editBook($this->getDoctrine(), $oldBook, $request->request->all());
+            $booksProvider = $this->get('AppBundle\Provider\BooksProvider');
+            $booksManager = $this->get('AppBundle\Manager\BooksManager');
+            $oldBook = $booksProvider->getSingleBook($id);
+            $booksManager->editBook($oldBook, $request->request->all());
             $view = $this->view('succes', 200);
 
             return $this->handleView($view);

@@ -13,8 +13,18 @@ use \AppBundle\Entity\Books;
 class BooksProvider
 {
 
+    /**
+     * EntityManager object
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     private $_doctrine;
 
+    /**
+     * BooksProvider constructor.
+     *
+     * @param \Doctrine\ORM\EntityManager $doctrine /
+     */
     public function __construct(\Doctrine\ORM\EntityManager $doctrine)
     {
         $this->_doctrine = $doctrine;
@@ -36,9 +46,9 @@ class BooksProvider
     /**
      * This method return only one book
      *
-     * @param int $id
+     * @param int $id //
      *
-     * @return \AppBundle\Entity\Books
+     * @return Books
      */
     public function getSingleBook(int $id): Books
     {

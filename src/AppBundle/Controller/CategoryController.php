@@ -36,6 +36,12 @@ class CategoryController extends FOSRestController
         return $this->handleView($view);
     }
 
+    /**
+     * This method return only one category
+     *
+     * @param int $id
+     * @return Response
+     */
     public function getCategoryAction(int $id): Response
     {
         $categoryProvider = $this->get('AppBundle\Provider\CategoryProvider');
@@ -58,8 +64,8 @@ class CategoryController extends FOSRestController
         $form = $this->createForm(AddCategoryType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $categoryLogic = $this->get('appbundle\utils\category');
-            $categoryLogic->addCategory($this->getDoctrine(), $request->request->all());
+            $categoryManager = $this->get('AppBundle\Manager\CategoryManager');
+            $categoryManager->addCategory($request->request->all());
             $view = $this->view('succes', 200);
 
             return $this->handleView($view);
@@ -70,6 +76,14 @@ class CategoryController extends FOSRestController
         return $this->handleView($view);
     }
 
+    /**
+     * This method delete category
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return Response
+     */
     public function deletePanelDelCategoryAction(Request $request, int $id): Response
     {
         $validator = Validation::createValidator();
@@ -79,23 +93,31 @@ class CategoryController extends FOSRestController
 
             return $this->handleView($view);
         }
-        $authorsLogic = $this->get('appbundle\utils\category');
+        $categoryManager = $this->get('AppBundle\Manager\CategoryManager');
 
-        $authorsLogic->delCategory($this->getDoctrine(), $id);
+        $categoryManager->delCategory($id);
         $view = $this->view('success', 200);
 
         return $this->handleView($view);
     }
 
+    /**
+     * This method changes category
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return Response
+     */
     public function putPanelEditCategoryAction(Request $request, int $id): Response
     {
-        $authorsLogic = $this->get('appbundle\utils\category');
         $form = $this->createForm(EditCategoryType::class);
         $form->submit($request->request->all());
         if ($form->isSubmitted()) {
-
-            $oldCategory = $authorsLogic->getSingleCategory($this->getDoctrine(), $id);
-            $authorsLogic->editCategory($this->getDoctrine(), $oldCategory, $request->request->all());
+            $categoryManager = $this->get('AppBundle\Manager\CategoryManager');
+            $categoryProvider = $this->get('AppBundle\Provider\CategoryProvider');
+            $oldCategory = $categoryProvider->getSingleCategory($id);
+            $categoryManager->editCategory($oldCategory, $request->request->all());
             $view = $this->view('succes', 200);
 
             return $this->handleView($view);
