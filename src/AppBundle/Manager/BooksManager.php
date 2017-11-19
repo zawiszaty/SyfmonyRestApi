@@ -6,6 +6,7 @@ namespace AppBundle\Manager;
 use \AppBundle\Entity\Books;
 use \AppBundle\Entity\Authors;
 use \AppBundle\Entity\Category;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 /**
@@ -26,7 +27,7 @@ class BooksManager
      *
      * BooksManager constructor.
      *
-     * @parameter \Doctrine\ORM\EntityManager $doctrine
+     * @param \Doctrine\ORM\EntityManager $doctrine
      */
     public function __construct(\Doctrine\ORM\EntityManager $doctrine)
     {
@@ -67,6 +68,9 @@ class BooksManager
     public function delBook(int $id): bool
     {
         $books = $this->_doctrine->getRepository(Books::class)->find($id);
+        if (!$books) {
+            throw new NotFoundHttpException();
+        }
         $this->_doctrine->remove($books);
         $this->_doctrine->flush();
 
@@ -88,6 +92,9 @@ class BooksManager
         $oldBooks->setDescription($params['description']);
         $authors = $this->_doctrine->getRepository(Authors::class)->find($params['authorsauthors']['idauthors']);
         $category = $this->_doctrine->getRepository(Category::class)->find($params['categorycategory']['idcategory']);
+        if (!$authors || !$category) {
+            throw new NotFoundHttpException();
+        }
         $oldBooks->setAuthorsauthors($authors);
         $oldBooks->setCategorycategory($category);
         $this->_doctrine->persist($oldBooks);

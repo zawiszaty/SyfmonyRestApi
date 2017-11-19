@@ -11,6 +11,7 @@ class EditCategoryType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('idcategory')
             ->add('name')
             ->add('description')
 

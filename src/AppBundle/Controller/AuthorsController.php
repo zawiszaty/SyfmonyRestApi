@@ -5,12 +5,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\AddAuthorsType;
 use AppBundle\Form\EditAuthorType;
-use AppBundle\Validator\Constraints\AuthorExist;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Validation;
 
 /**
  * Class AuthorsCategory
@@ -28,7 +25,6 @@ class AuthorsController extends FOSRestController
     {
         $authorProvider = $this->get('AppBundle\Provider\AuthorProvider');
         $authors = $authorProvider->getAllAuthors();
-
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($authors, 'json');
         $view = $this->view($authors, 200);
@@ -38,7 +34,7 @@ class AuthorsController extends FOSRestController
     /**
      * This method return only one author
      *
-     * @param int $id
+     * @param int $id author id
      *
      * @return Response
      */
@@ -55,7 +51,7 @@ class AuthorsController extends FOSRestController
     /**
      * This method add new author
      *
-     * @param Request $request
+     * @param Request $request request object
      *
      * @return Response
      */
@@ -80,41 +76,32 @@ class AuthorsController extends FOSRestController
     /**
      * This method delete author
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request $request request object
+     * @param int $id id author
      *
      * @return Response
      */
     public function deletePanelDelAuthorAction(Request $request, int $id): Response
     {
-        $validator = Validation::createValidator();
-        $violations = $validator->validate($id, array(new NotBlank(),));
-        if (0 !== count($violations)) {
-            $view = $this->view('error', 200);
-
-            return $this->handleView($view);
-        }
         $authorsManager = $this->get('AppBundle\Manager\AuthorManager');
-
         $authorsManager->delAuthor($id);
         $view = $this->view('success', 200);
-
         return $this->handleView($view);
     }
 
     /**
      * This method changes author
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request $request request object
+     * @param int $id id author
      *
      * @return Response
      */
     public function putPanelEditAuthorAction(Request $request, int $id): Response
     {
         $form = $this->createForm(EditAuthorType::class);
-        $form->submit($request->request->all());
-        if ($form->isSubmitted()) {
+        $form->submit($request->request->all() && $form->isValid());
+        if ($form->isSubmitted() && $form->isValid()) {
             $authorsManager = $this->get('AppBundle\Manager\AuthorManager');
             $authorProvider = $this->get('AppBundle\Provider\AuthorProvider');
             $oldAuhtor = $authorProvider->getSingleAuthor($id);

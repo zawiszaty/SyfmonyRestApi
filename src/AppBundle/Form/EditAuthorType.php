@@ -13,6 +13,7 @@ class EditAuthorType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('idauthors')
             ->add('name')
             ->add('description');
 

@@ -26,7 +26,7 @@ class BooksController extends FOSRestController
     public function getAllBooksAction(): Response
     {
         $bookProvider = $this->get('AppBundle\Provider\BooksProvider');
-        $books = $bookProvider->getAllBooks($this->getDoctrine());
+        $books = $bookProvider->getAllBooks();
         $serializer = $this->container->get('jms_serializer');
         $serializer->serialize($books, 'json');
         $view = $this->view($books, 200);
@@ -34,7 +34,10 @@ class BooksController extends FOSRestController
     }
 
     /**
-     * @param int $id
+     * This method return only one id
+     *
+     * @param int $id book id
+     *
      * @return Response
      */
     public function getBookAction(int $id): Response
@@ -49,6 +52,8 @@ class BooksController extends FOSRestController
 
     /**
      * This method added new books
+     *
+     * @param Request $request request object
      *
      * @return Response
      */
@@ -70,41 +75,33 @@ class BooksController extends FOSRestController
     }
 
     /**
-     * @param Request $request
-     * @param int $id
+     * This method delete book
+     *
+     * @param Request $request request object
+     * @param int $id book id
+     *
      * @return Response
      */
     public function deletePanelDelBookAction(Request $request, int $id): Response
     {
-        $validator = Validation::createValidator();
-        $violations = $validator->validate($id, array(new NotBlank(),));
-        if (0 !== count($violations)) {
-            $view = $this->view('error', 200);
-
-            return $this->handleView($view);
-        }
-
         $booksManager = $this->get('AppBundle\Manager\BooksManager');
-
         $booksManager->delBook($id);
         $view = $this->view('success', 200);
-
         return $this->handleView($view);
     }
 
     /**
      * This method changes book
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request $request request object
+     * @param int $id book id
      *
      * @return Response
      */
     public function putPanelEditBookAction(Request $request, int $id): Response
     {
-
         $form = $this->createForm(EditBookType::class);
-        $form->submit($request->request->all());
+        $form->submit($request->request->all() && $form->isValid());
         if ($form->isSubmitted()) {
             $booksProvider = $this->get('AppBundle\Provider\BooksProvider');
             $booksManager = $this->get('AppBundle\Manager\BooksManager');

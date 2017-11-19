@@ -4,6 +4,7 @@
 namespace AppBundle\Provider;
 
 use \AppBundle\Entity\Books;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class BooksProvider
@@ -53,6 +54,10 @@ class BooksProvider
     public function getSingleBook(int $id): Books
     {
         $books = $this->_doctrine->getRepository(Books::class)->find($id);
+        if (!$books)
+        {
+            throw new NotFoundHttpException();
+        }
         return $books;
     }
 }

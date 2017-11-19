@@ -5,6 +5,7 @@ namespace AppBundle\Manager;
 
 use \AppBundle\Entity\Authors;
 use \AppBundle\Entity\Books;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class AuthorManager
@@ -59,6 +60,9 @@ class AuthorManager
     {
         $author = $this->_doctrine->getRepository(Authors::class)->find($id);
         $books = $this->_doctrine->getRepository(Books::class)->findBy(['authorsauthors' => $id]);
+        if (!$author || !$books) {
+            throw new NotFoundHttpException();
+        }
         $defaultAuthor = $this->_doctrine->getRepository(Authors::class)->find(1);
         foreach ($books as $book) {
             $book->setAuthorsauthors($defaultAuthor);

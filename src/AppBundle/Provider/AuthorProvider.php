@@ -3,8 +3,8 @@
 
 namespace AppBundle\Provider;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use \AppBundle\Entity\Authors;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class AuthorProvider
@@ -40,7 +40,10 @@ class AuthorProvider
         $authors = $this->_doctrine
             ->getRepository(Authors::class)
             ->findAll();
-
+        if (!$authors)
+        {
+            throw new NotFoundHttpException();
+        }
         return $authors;
     }
 
@@ -56,7 +59,10 @@ class AuthorProvider
         $author = $this->_doctrine
             ->getRepository(Authors::class)
             ->find($id);
-
+        if (!$author)
+        {
+            throw new NotFoundHttpException();
+        }
         return $author;
     }
 }

@@ -13,6 +13,7 @@ class EditBookType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('idbooks')
             ->add('name')
             ->add('description')
             ->add('authorsauthors')

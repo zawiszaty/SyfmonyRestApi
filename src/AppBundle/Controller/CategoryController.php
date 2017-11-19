@@ -2,16 +2,11 @@
 
 namespace AppBundle\Controller;
 
-
-use AppBundle\Entity\Category;
 use AppBundle\Form\AddCategoryType;
 use AppBundle\Form\EditCategoryType;
 use FOS\RestBundle\Controller\FOSRestController;
-use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Validation;
 
 /**
  * Class CategoryController
@@ -39,7 +34,8 @@ class CategoryController extends FOSRestController
     /**
      * This method return only one category
      *
-     * @param int $id
+     * @param int $id category id
+     *
      * @return Response
      */
     public function getCategoryAction(int $id): Response
@@ -55,7 +51,7 @@ class CategoryController extends FOSRestController
     /**
      * This method added new category
      *
-     * @param Request $request
+     * @param Request $request request object
      *
      * @return Response
      */
@@ -79,20 +75,13 @@ class CategoryController extends FOSRestController
     /**
      * This method delete category
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request $request request object
+     * @param int $id id category
      *
      * @return Response
      */
     public function deletePanelDelCategoryAction(Request $request, int $id): Response
     {
-        $validator = Validation::createValidator();
-        $violations = $validator->validate($id, array(new NotBlank(),));
-        if (0 !== count($violations)) {
-            $view = $this->view('error', 200);
-
-            return $this->handleView($view);
-        }
         $categoryManager = $this->get('AppBundle\Manager\CategoryManager');
 
         $categoryManager->delCategory($id);
@@ -104,8 +93,8 @@ class CategoryController extends FOSRestController
     /**
      * This method changes category
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request $request request object
+     * @param int $id category id
      *
      * @return Response
      */

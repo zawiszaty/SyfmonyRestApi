@@ -39,20 +39,14 @@ services:
         resource: '../../src/AppBundle/Manager'
         public: true
         arguments: [ '@doctrine.orm.entity_manager']
+    AppBundle\Validator\Validations\:
+        resource: '../../src/AppBundle/Validator/Validations'
+        public: true
 
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
-    AppBundle\Utils\Books:
-        public: true
-    AppBundle\Utils\Category:
-        public: true
-    AppBundle\Utils\Authors:
-        public: true
-    author_exist_validator:
-        class: AppBundle\Validator\Constraints\AuthorExistValidator
-        arguments: ['@doctrine.orm.entity_manager']
-        tags:
-            - { name: validator.constraint_validator, alias: author_exist }
+
+
 

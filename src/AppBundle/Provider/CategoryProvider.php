@@ -5,6 +5,7 @@ namespace AppBundle\Provider;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use \AppBundle\Entity\Category;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class CategoryProvider
@@ -40,7 +41,10 @@ class CategoryProvider
         $category = $this->_doctrine
             ->getRepository(Category::class)
             ->findAll();
-
+        if (!$category)
+        {
+            throw new NotFoundHttpException();
+        }
         return $category;
     }
 
@@ -56,7 +60,10 @@ class CategoryProvider
         $category = $this->_doctrine
             ->getRepository(Category::class)
             ->find($id);
-
+        if (!$category)
+        {
+            throw new NotFoundHttpException();
+        }
         return $category;
     }
 }

@@ -6,6 +6,7 @@ namespace AppBundle\Manager;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use \AppBundle\Entity\Category;
 use \AppBundle\Entity\Books;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class CategoryManager
@@ -60,6 +61,9 @@ class CategoryManager
     {
         $category = $this->_doctrine->getRepository(Category::class)->find($id);
         $books = $this->_doctrine->getRepository(Books::class)->findBy(['categorycategory' => $id]);
+        if (!$category || !$books) {
+            throw new NotFoundHttpException();
+        }
         $defaultCategory = $this->_doctrine->getRepository(Category::class)->find(1);
         foreach ($books as $book) {
             $book->setCategorycategory($defaultCategory);
