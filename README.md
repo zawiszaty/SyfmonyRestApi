@@ -1,4 +1,2 @@
-symfonyBooksRest
-================
-
-A Symfony project created on October 28, 2017, 2:49 pm.
+Pierwsze rest api w symfony. Dowidziałem się czym jest jwt token i jak się tym posługiwać. 
+Zacząłem inaczej rozdzielać logikę od kontrolerów. 
